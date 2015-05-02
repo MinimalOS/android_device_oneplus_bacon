@@ -37,6 +37,9 @@ TARGET_VENDOR_PRODUCT_NAME := bacon
 TARGET_VENDOR_DEVICE_NAME := A0001
 PRODUCT_BUILD_PROP_OVERRIDES += TARGET_DEVICE=A0001 PRODUCT_NAME=bacon
 
+# Unofficial build ID
+TARGET_UNOFFICIAL_BUILD_ID := Sultan
+
 ## Use the latest approved GMS identifiers unless running a signed build
 ifneq ($(SIGN_BUILD),true)
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_FINGERPRINT=oneplus/bacon/A0001:5.0.2/LRX22G/YNG1TAS0YL:user/release-keys PRIVATE_BUILD_DESC="bacon-user 5.0.2 LRX22G YNG1TAS0YL release-keys"
