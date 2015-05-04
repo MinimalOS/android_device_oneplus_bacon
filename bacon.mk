@@ -61,9 +61,6 @@ PRODUCT_EXTRA_RECOVERY_KEYS += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.default_network=9
 
-# Fuuuuu
-PRODUCT_PACKAGES += camera.bacon
-
 # Device uses high-density artwork where available
 PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi
