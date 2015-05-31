@@ -42,11 +42,14 @@
 #define SLEEP_USEC_BETWN_RETRY		200
 #define LOW_POWER_MAX_FREQ		"729600"
 #define LOW_POWER_MIN_FREQ		"300000"
-#define NORMAL_MAX_FREQ			"2457600"
+#define NORMAL_MAX_FREQ			"1958400"
+#define ABS_MAX_FREQ			"2457600"
 #define UEVENT_STRING			"online@/devices/system/cpu/"
 #define CPU_INPUT_BOOST_PATH		"/sys/kernel/cpu_input_boost/userspace_minfreq"
+#define MAXFREQ_SAVE_PATH		"/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
 
 static struct pollfd pfd;
+static char saved_maxfreq[20];
 static char *cpu_path_min[] = {
     "/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq",
     "/sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq",
@@ -86,6 +89,34 @@ static int sysfs_write(const char *path, char *s)
     return 0;
 }
 
+static int sysfs_read(char *path, char *s, int num_bytes)
+{
+    char buf[200];
+    int count, len, ret = 0;
+    int fd = open(path, O_RDONLY);
+
+    if (fd < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        return -1;
+    }
+
+    if ((count = read(fd, s, num_bytes - 1)) < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        ret = -1;
+    } else
+        s[count] = '\0';
+
+    close(fd);
+
+    if (!ret) {
+        len = strlen(s) - 1;
+        while (len >= 0 && (s[len] == '\n' || s[len] == '\r'))
+            s[len--] = '\0';
+    }
+
+    return ret;
+}
+
 static int uevent_event()
 {
     char msg[UEVENT_MSG_LEN];
@@ -113,6 +144,7 @@ static int uevent_event()
 
         pthread_mutex_lock(&low_power_mode_lock);
         if (low_power_mode && !freq_set[cpu]) {
+            sysfs_read(MAXFREQ_SAVE_PATH, saved_maxfreq, sizeof(saved_maxfreq));
             sysfs_write(CPU_INPUT_BOOST_PATH, LOW_POWER_MIN_FREQ);
             while (retry) {
                 sysfs_write(cpu_path_min[cpu], LOW_POWER_MIN_FREQ);
@@ -127,7 +159,9 @@ static int uevent_event()
         } else if (!low_power_mode && freq_set[cpu]) {
              sysfs_write(CPU_INPUT_BOOST_PATH, "0");
              while (retry) {
-                  ret = sysfs_write(cpu_path_max[cpu], NORMAL_MAX_FREQ);
+                  if (strncmp(saved_maxfreq, NORMAL_MAX_FREQ, sizeof(saved_maxfreq)))
+                      strncpy(saved_maxfreq, ABS_MAX_FREQ, sizeof(saved_maxfreq));
+                  ret = sysfs_write(cpu_path_max[cpu], saved_maxfreq);
                   if (!ret) {
                       freq_set[cpu] = false;
                       break;
@@ -203,6 +237,7 @@ static void power_hint( __attribute__((unused)) struct power_module *module,
     pthread_mutex_lock(&low_power_mode_lock);
     if (data) {
         low_power_mode = true;
+        sysfs_read(MAXFREQ_SAVE_PATH, saved_maxfreq, sizeof(saved_maxfreq));
         sysfs_write(CPU_INPUT_BOOST_PATH, LOW_POWER_MIN_FREQ);
         for (cpu = 0; cpu < TOTAL_CPUS; cpu++) {
             sysfs_write(cpu_path_min[cpu], LOW_POWER_MIN_FREQ);
@@ -214,8 +249,10 @@ static void power_hint( __attribute__((unused)) struct power_module *module,
     } else {
         low_power_mode = false;
         sysfs_write(CPU_INPUT_BOOST_PATH, "0");
+        if (strncmp(saved_maxfreq, NORMAL_MAX_FREQ, sizeof(saved_maxfreq)))
+	    strncpy(saved_maxfreq, ABS_MAX_FREQ, sizeof(saved_maxfreq));
         for (cpu = 0; cpu < TOTAL_CPUS; cpu++) {
-            ret = sysfs_write(cpu_path_max[cpu], NORMAL_MAX_FREQ);
+            ret = sysfs_write(cpu_path_max[cpu], saved_maxfreq);
             if (!ret) {
                 freq_set[cpu] = false;
             }
