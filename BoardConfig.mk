@@ -47,6 +47,8 @@ TARGET_INIT_VENDOR_LIB := libinit_bacon
 
 TARGET_WCNSS_MAC_PREFIX := e8bba8
 
+WITH_LZMA_OTA := true
+
 # Workaround for factory issue
 BOARD_VOLD_CRYPTFS_MIGRATE := true
 
