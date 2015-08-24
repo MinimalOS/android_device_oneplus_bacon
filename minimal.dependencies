@@ -21,8 +21,8 @@
   },
   {
     "remote": "gh",
-    "repository": "anarkia1976/AK-OnePone-Reborn",
+    "repository": "anarkia1976/AK-OnePone-Reborn-CM",
     "target_path": "kernel/oneplus/msm8974",
-    "revision": "ak-12.1-official"
+    "revision": "ak-12.1-official-CM"
   }
 ]
