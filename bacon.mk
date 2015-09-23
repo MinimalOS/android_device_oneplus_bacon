@@ -48,9 +48,10 @@ PRODUCT_PACKAGES += \
 # Audio
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_effects.conf:system/vendor/etc/audio_effects.conf \
-    $(LOCAL_PATH)/audio/MaxxAudio/MaxxAudioFX.apk:system/priv-app/MaxxAudioFX.apk \
-    $(LOCAL_PATH)/audio/MaxxAudio/lib/libMA3-processcode-Coretex_A9.so:system/vendor/lib/libMA3-processcode-Coretex_A9.so \
-    $(LOCAL_PATH)/audio/MaxxAudio/lib/libMA3-processcode-Qualcomm.so:system/vendor/lib/libMA3-processcode-Qualcomm.so \
+    $(LOCAL_PATH)/audio/MaxxAudio/MaxxAudioFX.apk:system/priv-app/MaxxAudioFX/MaxxAudioFX.apk \
+    $(LOCAL_PATH)/audio/MaxxAudio/lib/libMA3-processcode-Coretex_A9.so:system/vendor/lib/libMA3-wavesfx-Coretex_A9.so \
+    $(LOCAL_PATH)/audio/MaxxAudio/lib/libMA3-processcode-Qualcomm.so:system/vendor/lib/libMA3-wavesfx-Qualcomm.so \
+    $(LOCAL_PATH)/audio/MaxxAudio/lib/libgnustl_shared.so:system/vendor/lib/libgnustl_shared.so \
     $(LOCAL_PATH)/audio/MaxxAudio/lib/soundfx/libmaxxeffect-cembedded.so:system/vendor/lib/soundfx/libmaxxeffect-cembedded.so \
     $(LOCAL_PATH)/audio/MaxxAudio/lib/soundfx/libqcbassboost.so:system/vendor/lib/soundfx/libqcbassboost.so \
     $(LOCAL_PATH)/audio/MaxxAudio/lib/soundfx/libqcreverb.so:system/vendor/lib/soundfx/libqcreverb.so \
