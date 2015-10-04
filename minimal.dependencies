@@ -9,7 +9,7 @@
     "target_path": "vendor/oppo",
     "revision": "cm-12.1"
   },
-  { "remote": "th",
+  { "remote": "mo",
     "repository": "android_device_oppo_common",
     "target_path": "device/oppo/common",
     "revision": "lp-mr1"
